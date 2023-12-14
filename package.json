@@ -1,0 +1,46 @@
+{
+  "name": "connect-us",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "engines": {
+    "node": "^16.20.1",
+    "npm": "8.19.4"
+  },
+  "scripts": {
+    "start": "npm run build && node build/index.js",
+    "clean": "rm -rf ./build && mkdir build",
+    "build": "npm run clean && babel ./src -d ./build --copy-files",
+    "dev": "nodemon --exec babel-node src/index.js --watch"
+    },
+  "keywords": [],
+  "author": "ORANGEGROUP",
+  "dependencies": {
+    "@babel/cli": "^7.23.0",
+    "@babel/core": "^7.23.2",
+    "@babel/node": "^7.22.19",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.23.2",
+    "app-root-path": "^3.1.0",
+    "babel-plugin-module-resolver": "^5.0.0",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "helmet": "^7.0.0",
+    "joi": "^17.11.0",
+    "joi-objectid": "^4.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.2.0",
+    "mongoose": "^7.6.3",
+    "mongoose-paginate-v2": "^1.7.4",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.0.1",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^9.0.1"
+      }
+}
