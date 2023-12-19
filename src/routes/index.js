@@ -35,16 +35,16 @@ app.use('/news', newsRoute)
 
 app.use('/messages', messageRouter);
 
-app.all('*', (req, res, next) => {
-  return next(
-    new AppError(
-      `The requested page: ${req.originalUrl} not found on this server`,
-      404
-    )
-  );
-});
+// app.all('*', (req, res, next) => {
+//   return next(
+//     new AppError(
+//       `The requested page: ${req.originalUrl} not found on this server`,
+//       404
+//     )
+//   );
+// });
 
 
-app.use(globalErrorHandler);
+// app.use(globalErrorHandler);
 
 export default app;
