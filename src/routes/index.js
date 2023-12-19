@@ -35,6 +35,12 @@ app.use('/news', newsRoute)
 
 app.use('/messages', messageRouter);
 
+
+app.get('/', (req, res) => {
+  res.status(200).send('ConnectUs Backend is online and healthy techies')
+});
+
+
 // app.all('*', (req, res, next) => {
 //   return next(
 //     new AppError(
