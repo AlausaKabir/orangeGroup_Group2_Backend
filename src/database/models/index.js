@@ -1,5 +1,7 @@
 import UserModel from './user'
+import NewsModel from './news'
 
 export {
-    UserModel
+    UserModel,
+    NewsModel
 }

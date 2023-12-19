@@ -5,9 +5,13 @@ import bodyParser from 'body-parser';
 import Logger from '../config/logger';
 import morgan from 'morgan';
 import userAuthRoute from '../apps/auth/routes/userAuthRoute';
+
+import newsRoute from '../apps/news/routes/newsRoute';
+
 import globalErrorHandler from '../utils/errorController';
 import messageRouter from '../apps/messaging/routes/messageRoutes';
 import AppError from '../utils/appError';
+
 
 const app = express();
 global.logger = Logger.createLogger({ label: 'ConnectUs Backend' });
@@ -26,6 +30,9 @@ app.get(`/healthcheck`, (req, res) => {
 
 // ## AUTH ROUTES ##
 app.use('/auth', userAuthRoute);
+
+app.use('/news', newsRoute)
+
 app.use('/messages', messageRouter);
 
 app.all('*', (req, res, next) => {
@@ -36,6 +43,7 @@ app.all('*', (req, res, next) => {
     )
   );
 });
+
 
 app.use(globalErrorHandler);
 
