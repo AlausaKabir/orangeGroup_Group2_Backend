@@ -5,6 +5,7 @@ import {
   deleteMesage,
   getMessages,
   getMessagesSentByOneUser,
+  restrictDeleteToSender,
   updateMessageToReadForAUser,
 } from '../controllers/messageController';
 
@@ -18,6 +19,6 @@ router.get('/user', getMessagesSentByOneUser);
 router
   .route('/:messageId')
   .patch(updateMessageToReadForAUser)
-  .delete(deleteMesage);
+  .delete(restrictDeleteToSender(), deleteMesage);
 
 module.exports = router;

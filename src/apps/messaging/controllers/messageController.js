@@ -1,9 +1,24 @@
+const {
+  default: MessageRepo,
+} = require('../../../database/repository/messageRepo');
 const AppError = require('../../../utils/appError');
 const catchAsync = require('../../../utils/catchAsync');
 const { default: MessageService } = require('../services/messageService');
 
+/**
+ * @description Create a message.
+ * @param {Object} req - HTTP Request
+ * @param {Object} res - HTTP Response
+ * @param {Function} next - Next Function
+ * @returns {Object} - Returns an Object
+ */
+
 exports.createMessage = catchAsync(async (req, res, next) => {
-  const result = await MessageService.createMessage(req.body);
+  const { _id: userId } = req.user;
+  const result = await MessageService.createMessage({
+    sender: userId,
+    ...req.body,
+  });
 
   if (result.statusCode !== 201) return next(new AppError(result.message, 400));
 
@@ -15,6 +30,14 @@ exports.createMessage = catchAsync(async (req, res, next) => {
   });
 });
 
+/**
+ * @description Get all messages in the database.
+ * @param {Object} req - HTTP Request
+ * @param {Object} res - HTTP Response
+ * @param {Function} next - Next Function
+ * @returns {Array} - Returns an Array of Objects
+ */
+
 exports.getMessages = catchAsync(async (req, res, next) => {
   const result = await MessageService.getMessages();
 
@@ -25,6 +48,14 @@ exports.getMessages = catchAsync(async (req, res, next) => {
     ...result,
   });
 });
+
+/**
+ * @description Get messages sent by a user.
+ * @param {Object} req - HTTP Request
+ * @param {Object} res - HTTP Response
+ * @param {Function} next - Next Function
+ * @returns {Array} - Returns an Array of Objects
+ */
 
 exports.getMessagesSentByOneUser = catchAsync(async (req, res, next) => {
   const { _id: userId } = req.user;
@@ -39,6 +70,13 @@ exports.getMessagesSentByOneUser = catchAsync(async (req, res, next) => {
   });
 });
 
+/**
+ * @description Update a message to read for a recipient.
+ * @param {Object} req - HTTP Request
+ * @param {Object} res - HTTP Response
+ * @param {Function} next - Next Function
+ * @returns {Object} - Returns an Object
+ */
 exports.updateMessageToReadForAUser = catchAsync(async (req, res, next) => {
   const { _id: userId } = req.user;
   const { messageId } = req.params;
@@ -48,7 +86,8 @@ exports.updateMessageToReadForAUser = catchAsync(async (req, res, next) => {
     userId
   );
 
-  if (result.statusCode !== 200) return next(new AppError(result.message, 400));
+  if (result.statusCode !== 200)
+    return next(new AppError(result.message, result.statusCode));
 
   res.status(result.statusCode).json({
     status: 'success',
@@ -57,16 +96,20 @@ exports.updateMessageToReadForAUser = catchAsync(async (req, res, next) => {
 });
 
 /**
- *
+ * @description Delete a message.
+ * @param {Object} req - HTTP Request
+ * @param {Object} res - HTTP Response
+ * @param {Function} next - Next Function
+ * @returns {Object} - Returns a void
  */
 
 exports.deleteMesage = catchAsync(async (req, res, next) => {
   const { _id: userId } = req.user;
   const { messageId } = req.params;
 
-  // if (userId !== me )
-
   const result = await MessageService.deleteMessage(messageId);
+
+  console.log({ result });
   logger.info(`deleteMessage => info: Message deleted successfully`);
 
   if (result.statusCode !== 204) return next(new AppError(result.message, 400));
@@ -76,3 +119,28 @@ exports.deleteMesage = catchAsync(async (req, res, next) => {
     ...result,
   });
 });
+
+/**
+ *
+ * @returns
+ */
+
+exports.restrictDeleteToSender = () => {
+  return async (req, res, next) => {
+    const { messageId } = req.params;
+
+    const message = await MessageRepo.getMessageById(messageId);
+
+    if (!message) return next(new AppError('No message found', 404));
+
+    if (message?.sender._id.toString() !== req.user._id.toString())
+      return next(
+        new AppError(
+          'You are not sender hence not authorized to delete this message',
+          400
+        )
+      );
+
+    next();
+  };
+};

@@ -98,8 +98,7 @@ export default class MessageService {
         `updateMessageToReadForAUser => info: Message with id: ${messageId} updated to read successfully for ${userId}`
       );
 
-      if (!message)
-        return new AppError('Something bad went wrong. Try again later', 400);
+      if (!message) return new AppError('No message with that ID found!', 404);
 
       return {
         statusCode: 200,
@@ -109,12 +108,14 @@ export default class MessageService {
         },
       };
     } catch (error) {
+      console.log('Error Here:', error.message);
       logger.error(`updateMessageToReadForAUser => error: ${error.message}`);
+      throw error;
     }
   }
 
   /**
-   * @description
+   * @description Deletes a message from the database.
    * @param {ObjectId} messageId - The ID of the message to be deleted
    * @returns {}
    */
@@ -122,6 +123,14 @@ export default class MessageService {
   static async deleteMessage(messageId) {
     try {
       const message = await MessageRepo.deleteMessage(messageId);
+
+      if (!message)
+        return new AppError(
+          'Message with the specified ID not found on this server',
+          404
+        );
+
+      console.log({ message });
       logger.info(
         `deleteMessage => info: Message with id: ${messageId} deleted successfully by sender`
       );
@@ -131,8 +140,9 @@ export default class MessageService {
         message: 'Message deleted successfully',
       };
     } catch (error) {
+      console.log('Error here:', error.message);
       logger.error(`deleteMessage => error: ${error.message}`);
-      throw error;
+      return new AppError(error, 400);
     }
   }
 }
