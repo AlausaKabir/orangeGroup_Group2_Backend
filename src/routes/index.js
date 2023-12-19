@@ -5,10 +5,12 @@ import bodyParser from 'body-parser';
 import Logger from '../config/logger';
 import morgan from 'morgan';
 import userAuthRoute from '../apps/auth/routes/userAuthRoute';
+import globalErrorHandler from '../utils/errorController';
+import messageRouter from '../apps/messaging/routes/messageRoutes';
+import AppError from '../utils/appError';
 
 const app = express();
 global.logger = Logger.createLogger({ label: 'ConnectUs Backend' });
-
 
 app.use(helmet());
 app.use(cors({}));
@@ -24,7 +26,17 @@ app.get(`/healthcheck`, (req, res) => {
 
 // ## AUTH ROUTES ##
 app.use('/auth', userAuthRoute);
+app.use('/messages', messageRouter);
 
+app.all('*', (req, res, next) => {
+  return next(
+    new AppError(
+      `The requested page: ${req.originalUrl} not found on this server`,
+      404
+    )
+  );
+});
 
+app.use(globalErrorHandler);
 
 export default app;

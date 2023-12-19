@@ -1,4 +1,4 @@
-import { UserModel } from "../models/";
+import { UserModel } from '../models/';
 
 /**
  * @fileOverview UserRepo class for user-related database operations.

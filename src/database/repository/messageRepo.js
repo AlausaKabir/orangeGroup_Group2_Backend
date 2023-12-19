@@ -32,7 +32,7 @@ export default class MessageRepo {
    */
 
   static async getAllMessagesForAUser(userId) {
-    return await Message.find({ recipients: userId });
+    return await Message.find({ sender: userId });
   }
 
   /**
@@ -42,5 +42,20 @@ export default class MessageRepo {
 
   static async getMessages() {
     return await Message.find();
+  }
+
+  static async updateIsRead(messageId, userId) {
+    return await Message.findOneAndUpdate(
+      { _id: messageId, 'recipients.user': userId },
+      { 'recipients.$.isRead': true },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+  }
+
+  static async deleteMessage(messageId) {
+    return await Message.findOneAndDelete(messageId);
   }
 }

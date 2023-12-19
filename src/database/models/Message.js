@@ -9,18 +9,16 @@ const messageSchema = mongoose.Schema(
     },
     recipients: [
       {
-        type: mongoose.Schema.ObjectId,
-        ref: 'User',
-        required: true,
+        user: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
+        isRead: {
+          type: Boolean,
+          default: false,
+        },
       },
     ],
     content: {
       type: String,
       required: true,
-    },
-    isRead: {
-      type: Boolean,
-      default: false,
     },
   },
   {
@@ -29,6 +27,14 @@ const messageSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+
+messageSchema.pre(/^find/, async function (next) {
+  this.populate({
+    path: 'sender',
+    select: 'firstName lastName email',
+  });
+  next();
+});
 
 const Message = mongoose.model('Message', messageSchema);
 
