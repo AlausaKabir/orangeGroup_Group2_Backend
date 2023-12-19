@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config('../../config.env');
 
 const keys = {
   PORT: process.env.PORT,
@@ -9,9 +9,9 @@ const keys = {
   DATABASE: {
     MONGODB: {
       DEVELOPMENT: {
-        CONNECTION_STRING: process.env.MONGO_URI_DEV
-      }
-    }
+        CONNECTION_STRING: process.env.MONGO_URI_DEV,
+      },
+    },
   },
   JWT: {
     REFRESH_TOKEN: process.env.JWT_REFRESH_TOKEN,
@@ -19,7 +19,6 @@ const keys = {
     EXPIRES: process.env.JWT_EXPIRES,
     REFRESH_EXPIRES: process.env.JWT_REFRESH_EXPIRES,
   },
-
 };
 
 export default keys;
