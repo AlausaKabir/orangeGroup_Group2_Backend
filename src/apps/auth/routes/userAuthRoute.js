@@ -1,10 +1,7 @@
 import express from 'express';
 import userAuthController from '../controllers/userAuthController';
 import validate from '../../../validation/validatorClass';
-import {
-  createUserSchema,
-  loginUserSchema,
-} from '../validation/user';
+import { createUserSchema, loginUserSchema } from '../validation/user';
 
 const router = express.Router();
 
@@ -19,6 +16,5 @@ router.post(
   validate(loginUserSchema),
   userAuthController.loginUserAuthController
 );
-
 
 export default router;

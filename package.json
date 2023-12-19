@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "engines": {
-    "node": "^16.20.1",
+    "node": ">=16.20.1",
     "npm": "8.19.4"
   },
   "scripts": {
@@ -12,7 +12,7 @@
     "clean": "rm -rf ./build && mkdir build",
     "build": "npm run clean && babel ./src -d ./build --copy-files",
     "dev": "nodemon --exec babel-node src/index.js --watch"
-    },
+  },
   "keywords": [],
   "author": "ORANGEGROUP",
   "dependencies": {
@@ -42,5 +42,5 @@
   },
   "devDependencies": {
     "mongodb-memory-server": "^9.0.1"
-      }
+  }
 }
