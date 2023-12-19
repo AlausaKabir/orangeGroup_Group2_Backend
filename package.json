@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "engines": {
     "node": ">=16.20.1",
-    "npm": "8.19.4"
+    "npm": "8.19.4",
+    "yarn": "1.22.17"
   },
   "scripts": {
     "start": "npm run build && node build/index.js",

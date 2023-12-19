@@ -11,6 +11,12 @@ const keys = {
       DEVELOPMENT: {
         CONNECTION_STRING: process.env.MONGO_URI_DEV,
       },
+      STAGING: {
+        CONNECTION_STRING: process.env.MONGO_URI_DEV,
+      },
+      PRODUCTION: {
+        CONNECTION_STRING: process.env.MONGO_URI_DEV,
+      },
     },
   },
   JWT: {
