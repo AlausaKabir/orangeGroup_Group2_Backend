@@ -44,6 +44,41 @@ export default class MessageRepo {
     return await Message.find();
   }
 
+  /**
+   *
+   * @param {*} messageId
+   * @returns
+   */
+
+  static async getOneMessage(messageId) {
+    return await Message.findById(messageId);
+  }
+
+  /**
+   *
+   * @param {*} messageId
+   * @param {*} content
+   * @returns
+   */
+
+  static async editMessage(messageId, content) {
+    return await Message.findOneAndUpdate(
+      { _id: messageId },
+      { content },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+  }
+
+  /**
+   *
+   * @param {*} messageId
+   * @param {*} userId
+   * @returns
+   */
+
   static async updateIsRead(messageId, userId) {
     return await Message.findOneAndUpdate(
       { _id: messageId, 'recipients.user': userId },
@@ -55,7 +90,21 @@ export default class MessageRepo {
     );
   }
 
+  /**
+   *
+   * @param {*} messageId
+   * @returns
+   */
+
   static async deleteMessage(messageId) {
     return await Message.findOneAndDelete(messageId);
+  }
+
+  static async unreadMessageCount(userId) {
+    return await Message.countDocuments({
+      recipients: {
+        $elemMatch: { user: userId, isRead: false },
+      },
+    });
   }
 }
