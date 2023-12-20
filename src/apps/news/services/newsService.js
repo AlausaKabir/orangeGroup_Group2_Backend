@@ -98,7 +98,6 @@ export default class NewsService {
     static async updateNewsService(param, data) {
         const { id } = param
         try {
-            // Check if the news article exists
             const existingNews = await NewsRepo.findNewsById(id);
             if (!existingNews) {
                 return {

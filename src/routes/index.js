@@ -28,7 +28,7 @@ app.get(`/healthcheck`, (req, res) => {
   res.status(200).send('ConnectUs Backend is online and healthy techies');
 });
 
-// ## AUTH ROUTES ##
+
 app.use('/auth', userAuthRoute);
 
 app.use('/news', newsRoute)

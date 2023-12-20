@@ -27,8 +27,8 @@ export default class UserAuthService {
 
       const newUser = {
         email: email.toLowerCase(),
-        firstName: HelperFunctions.capitalize(firstName),
-        lastName: HelperFunctions.capitalize(lastName),
+        firstName: HelperFunctions.capitalizeFirstLetters(firstName),
+        lastName: HelperFunctions.capitalizeFirstLetters(lastName),
         phone: phone,
         password: hashedPassword,
       };
