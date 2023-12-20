@@ -13,11 +13,16 @@ import messageRouter from '../apps/messaging/routes/messageRoutes';
 import AppError from '../utils/appError';
 
 
+const corsOptions = {
+  origin: '*',
+};
+
+
 const app = express();
 global.logger = Logger.createLogger({ label: 'ConnectUs Backend' });
 
 app.use(helmet());
-app.use(cors({}));
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
