@@ -15,8 +15,9 @@ import AppError from '../utils/appError';
 
 const corsOptions = {
   origin: '*',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  optionsSuccessStatus: 204,
 };
-
 
 const app = express();
 global.logger = Logger.createLogger({ label: 'ConnectUs Backend' });
