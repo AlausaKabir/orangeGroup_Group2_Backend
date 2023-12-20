@@ -49,6 +49,33 @@ exports.getMessages = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getOneMessage = catchAsync(async (req, res, next) => {
+  const { messageId } = req.params;
+
+  const result = await MessageService.getOneMessage(messageId);
+
+  logger.info(`getOneMessage => info: Message fetched successfully`);
+
+  res.status(result.statusCode).json({
+    status: 'success',
+    ...result,
+  });
+});
+
+exports.editMessage = catchAsync(async (req, res, next) => {
+  const { messageId } = req.params;
+  const { content } = req.body;
+
+  const result = await MessageService.editMessage(messageId, content);
+
+  logger.info(`editMessage => info: Message edited successfully`);
+
+  res.status(result.statusCode).json({
+    status: 'success',
+    ...result,
+  });
+});
+
 /**
  * @description Get messages sent by a user.
  * @param {Object} req - HTTP Request
@@ -125,7 +152,7 @@ exports.deleteMesage = catchAsync(async (req, res, next) => {
  * @returns
  */
 
-exports.restrictDeleteToSender = () => {
+exports.restrictToSender = () => {
   return async (req, res, next) => {
     const { messageId } = req.params;
 
@@ -136,7 +163,7 @@ exports.restrictDeleteToSender = () => {
     if (message?.sender._id.toString() !== req.user._id.toString())
       return next(
         new AppError(
-          'You are not sender hence not authorized to delete this message',
+          'You are not the sender hence not authorized to perform any operation on this message',
           400
         )
       );
@@ -144,3 +171,17 @@ exports.restrictDeleteToSender = () => {
     next();
   };
 };
+
+exports.unreadMessageCount = catchAsync(async (req, res, next) => {
+  const { _id: userId } = req.user;
+  const result = await MessageService.getUnreadMessageCount(userId);
+
+  logger.info(
+    `unreadMessageCount => info: Unread messages count fetched successfully`
+  );
+
+  res.status(result.statusCode).json({
+    status: 'success',
+    ...result,
+  });
+});

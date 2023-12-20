@@ -58,6 +58,64 @@ export default class MessageService {
   }
 
   /**
+   *
+   * @param {*} messageId
+   * @returns
+   */
+
+  static async getOneMessage(messageId) {
+    try {
+      const message = await MessageRepo.getOneMessage(messageId);
+
+      if (!message)
+        return new AppError(
+          'No message with that ID found in the database',
+          404
+        );
+
+      logger.info(`getOneMessage => info: Message fetched successfully`);
+      return {
+        statusCode: 200,
+        message: 'Message fetched successfully',
+        data: {
+          message,
+        },
+      };
+    } catch (error) {
+      logger.error(`getOneMessage => error: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   *
+   * @param {*} messageId
+   * @param {*} content
+   * @returns
+   */
+  static async editMessage(messageId, content) {
+    try {
+      const message = await MessageRepo.editMessage(messageId, content);
+
+      if (!message)
+        return new AppError('No message with the specified ID found', 404);
+
+      logger.info(`editMessage => info: Message edited successfully`);
+
+      return {
+        statusCode: 200,
+        message: 'Message edited successfully',
+        data: {
+          message,
+        },
+      };
+    } catch (error) {
+      logger.error(`editMessage => error: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
    * @description - Find list of messages sent by a certain user.
    * @param {ObjectId} userId - The ID of the user.
    * @returns {Promise<Array>} - A promise that resolves to the array of messages sent by the user.
@@ -143,6 +201,29 @@ export default class MessageService {
       console.log('Error here:', error.message);
       logger.error(`deleteMessage => error: ${error.message}`);
       return new AppError(error, 400);
+    }
+  }
+
+  static async getUnreadMessageCount(userId) {
+    try {
+      const length = await MessageRepo.unreadMessageCount(userId);
+
+      console.log({ length });
+
+      logger.info(
+        `getUnreadMessageCount => info: Unread Message count ${length} fetched successfully`
+      );
+
+      return {
+        statusCode: 200,
+        message: 'Unread messages count fetched successfully',
+        data: {
+          count: length,
+        },
+      };
+    } catch (error) {
+      logger.error(`getUnreadMessageCount => error: ${error.message}`);
+      throw error;
     }
   }
 }

@@ -3,9 +3,12 @@ import AuthenticationMiddleware from '../../../middleware/authMiddleware';
 import {
   createMessage,
   deleteMesage,
+  editMessage,
   getMessages,
   getMessagesSentByOneUser,
-  restrictDeleteToSender,
+  getOneMessage,
+  restrictToSender,
+  unreadMessageCount,
   updateMessageToReadForAUser,
 } from '../controllers/messageController';
 
@@ -16,9 +19,12 @@ router.use(AuthenticationMiddleware.isUserAuthenticated);
 router.get('/', getMessages);
 router.post('/create-message', createMessage);
 router.get('/user', getMessagesSentByOneUser);
+router.patch('/:messageId/update-read', updateMessageToReadForAUser);
+router.get('/unread-count', unreadMessageCount);
 router
   .route('/:messageId')
-  .patch(updateMessageToReadForAUser)
-  .delete(restrictDeleteToSender(), deleteMesage);
+  .get(getOneMessage)
+  .patch(restrictToSender(), editMessage)
+  .delete(restrictToSender(), deleteMesage);
 
 module.exports = router;
