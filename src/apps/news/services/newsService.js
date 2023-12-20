@@ -1,5 +1,7 @@
 import NewsRepo from '../../../database/repository/newsRepo'
+import UserRepo from '../../../database/repository/userRepo'
 import { NewsModel } from '../../../database/models';
+import HelperFunctions from '../../../utils/helperFunctions';
 /**
  * @description News Service Class
  */
@@ -11,17 +13,19 @@ export default class NewsService {
      * @param {Object} data - the News data
      * @return {Object} - Returns an Object
      */
-    static async createNewsService(data) {
-        const { title, content, category, author } = data
+    static async createNewsService(data, user) {
+        const { title, content, category } = data
+        const newTitle = HelperFunctions.capitalizeFirstLetters(title)
+
         try {
-            const newsExist = await NewsRepo.findNewsByTitle(title)
+            const newsExist = await NewsRepo.findNewsByTitle(newTitle)
             if (newsExist)
                 return {
                     statusCode: 409,
                     message: 'News already exist'
                 }
 
-            const newNews = { title, content, category, author }
+            const newNews = { title: newTitle, content, category, author: user.id || user._id }
 
             const createNewNews = await NewsRepo.createNews(newNews)
 
@@ -39,8 +43,8 @@ export default class NewsService {
     }
 
 
-    static async getAllNewsService(user, query) {
-        const { page = 1, limit = 20 } = query;
+    static async getAllNewsService(query) {
+        const { page = 1, limit = 20, category } = query;
 
         const options = {
             page: parseInt(page, 10) || 1,
@@ -48,8 +52,10 @@ export default class NewsService {
             sort: { createdAt: -1 },
         };
 
+        const queryConditions = category ? { category: { $regex: new RegExp(category, 'i') } } : {};
+
         try {
-            const news = await NewsModel.paginate({}, options);
+            const news = await NewsRepo.getAllNews({ ...options, queryConditions });
 
             logger.info(`getAllNewsService -> news: ${JSON.stringify(news)}`);
 
@@ -64,9 +70,12 @@ export default class NewsService {
         }
     }
 
-    static async getNewsByIdService(newsInput) {
+
+    static async getNewsByIdService(data) {
+        const { id } = data
+        console.log(data, 'data');
         try {
-            const news = await NewsRepo.findNewsById({ id: newsInput.id || newsInput._id });
+            const news = await NewsRepo.findNewsById(id);
 
             if (!news) {
                 return {
@@ -82,6 +91,68 @@ export default class NewsService {
             };
         } catch (error) {
             logger.error(`getNewsByIdService -> error: ${error.message}`);
+            throw error;
+        }
+    }
+
+    static async updateNewsService(param, data) {
+        const { id } = param
+        try {
+            // Check if the news article exists
+            const existingNews = await NewsRepo.findNewsById(id);
+            if (!existingNews) {
+                return {
+                    statusCode: 404,
+                    message: 'News not found',
+                };
+            }
+
+            if (data.title)
+                data.title = HelperFunctions.capitalizeFirstLetters(data.title)
+
+            const newsExist = await NewsRepo.findNewsByTitle(data.title)
+            if (newsExist && newsExist._id.toString() === existingNewsId.toString())
+                return {
+                    statusCode: 409,
+                    message: 'News already exist'
+                }
+
+
+            const updatedNews = await NewsRepo.updateNews(id, data);
+
+            logger.info(`updateNewsService -> updatedNews: ${JSON.stringify(updatedNews)}`);
+
+            return {
+                statusCode: 200,
+                message: 'News updated successfully',
+                data: updatedNews,
+            };
+        } catch (error) {
+            logger.error(`updateNewsService -> error: ${error.message}`);
+            throw error;
+        }
+    }
+
+    static async deleteNewsService(newsId) {
+        try {
+            const existingNews = await NewsRepo.findNewsById(newsId);
+            if (!existingNews) {
+                return {
+                    statusCode: 404,
+                    message: 'News not found',
+                };
+            }
+
+            await NewsRepo.deleteNews(newsId);
+
+            logger.info(`deleteNewsService -> News deleted successfully with ID: ${newsId}`);
+
+            return {
+                statusCode: 200,
+                message: 'News deleted successfully',
+            };
+        } catch (error) {
+            logger.error(`deleteNewsService -> error: ${error.message}`);
             throw error;
         }
     }

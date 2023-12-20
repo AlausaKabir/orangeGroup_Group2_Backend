@@ -15,21 +15,12 @@ export default class NewsRepo {
     }
 
     /**
-     * @description Find all News in the database 
-     * @param {Object} news - The entire news to search for
-     * @returns {Promise<Object|null>} A promise that resolves with the news object if found, or null if not found
-     */
-    static async findAllNews(news) {
-        return NewsModel.find(news)
-    }
-
-    /**
      * @description Find a specific News in the database 
      * @param {Object} newsId - The ID of the news
      * @returns {Promise<Object|null>} A promise that resolves with the news object if found, or null if not found
      */
-    static async findNewsById(data) {
-        return NewsModel.findOne({ _id: data.id || data._id });
+    static async findNewsById(id) {
+        return NewsModel.findOne({ _id: id });
     }
 
     /**
@@ -65,6 +56,17 @@ export default class NewsRepo {
 
     static findNewsByTitle(title) {
         return NewsModel.findOne({ title })
+    }
+
+
+    static async getAllNews(options) {
+        const { page, limit, sort, queryConditions } = options;
+
+        return NewsModel.paginate(queryConditions, {
+            page,
+            limit,
+            sort,
+        });
     }
 }
 

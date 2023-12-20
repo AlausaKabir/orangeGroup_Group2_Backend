@@ -1,21 +1,35 @@
 import express from 'express'
-import newsController from '../controllers/newsController'
+import NewsController from '../controllers/newsController'
 import validate from '../../../validation/validatorClass'
-import { createNewsSchema } from '../validation/news'
+import AuthenticationMiddleware from '../../../middleware/authMiddleware'
+import { createNewsSchema, newsByIdSchema, updateNewsSchema } from '../validation/news'
 
 const router = express.Router()
 
 router.post(
     '/',
+    AuthenticationMiddleware.isUserAuthenticated,
     validate(createNewsSchema),
-    newsController.createNewsController
+    NewsController.createNewsController
 )
 
 router.get('/all',
-    newsController.getAllNews)
+    AuthenticationMiddleware.isUserAuthenticated,
+    NewsController.getAllNews
+)
 
 
-router.get('/', newsController.getNewsByIdController)
+router.get('/:id',
+    validate(newsByIdSchema),
+    NewsController.getNewsByIdController
+)
+
+router.put('/:id',
+    validate(updateNewsSchema),
+    NewsController.updateNewsController
+);
+
+router.delete('/:id', validate(newsByIdSchema), NewsController.deleteNewsController);
 
 
 export default router

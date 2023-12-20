@@ -17,8 +17,8 @@ export default class newsController {
 
     static async createNewsController(req, res) {
         try {
-            const { body } = req
-            const result = await NewsService.createNewsService(body)
+            const { body, user } = req
+            const result = await NewsService.createNewsService(body, user)
             if (result.statusCode !== 201)
                 return errorResponse(res, result.statusCode, result.message)
             logger.info(`createNewsController -> info: ${JSON.stringify(result)}`)
@@ -30,11 +30,9 @@ export default class newsController {
     }
 
     static async getAllNews(req, res) {
-        const { user } = req
-
-        const { page = 1, limit = 20 } = req.query
+        const { user, query } = req
         try {
-            const news = await NewsService.getAllNewsService(user, { page, limit })
+            const news = await NewsService.getAllNewsService(query)
             logger.info(`getAllNewsController -> news: ${JSON.stringify(news)}`)
             return successResponse(res, news.statusCode, news.message, news.data)
 
@@ -46,10 +44,10 @@ export default class newsController {
 
 
     static async getNewsByIdController(req, res) {
-        const { newsId } = req.params;
+        const { params } = req;
 
         try {
-            const result = await NewsService.getNewsByIdService(newsId);
+            const result = await NewsService.getNewsByIdService(params);
 
             if (result.statusCode !== 200) {
                 return errorResponse(res, result.statusCode, result.message);
@@ -63,4 +61,25 @@ export default class newsController {
         }
     }
 
+    static async updateNewsController(req, res) {
+        const { body, params } = req;
+
+        try {
+            const result = await NewsService.updateNewsService(params, body);
+            return successResponse(res, result.statusCode, result.message, result.data);
+        } catch (error) {
+            return errorResponse(res, 500, 'Internal Server Error');
+        }
+    }
+
+    static async deleteNewsController(req, res) {
+        const { id } = req.params;
+
+        try {
+            const result = await NewsService.deleteNewsService(id);
+            return successResponse(res, result.statusCode, result.message);
+        } catch (error) {
+            return errorResponse(res, 500, 'Internal Server Error');
+        }
+    }
 }

@@ -36,8 +36,8 @@ export default class HelperFunctions {
    * @returns {string} - Returns a formatted string with capitalized first letter of every word.
    * @memberof HelperFunctions
    */
-  static capitalize(string) {
-    return string.replace(/\b\w/g, (char) => char.toUpperCase());
+  static capitalizeFirstLetters(string) {
+    return string.toLowerCase().split(' ').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
   }
 
 
