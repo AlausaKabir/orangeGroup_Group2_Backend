@@ -8,13 +8,13 @@ const router = express.Router()
 
 router.post(
     '/',
-    // AuthenticationMiddleware.isUserAuthenticated,
+    AuthenticationMiddleware.isUserAuthenticated,
     validate(createNewsSchema),
     NewsController.createNewsController
 )
 
 router.get('/all',
-    // AuthenticationMiddleware.isUserAuthenticated,
+    AuthenticationMiddleware.isUserAuthenticated,
     NewsController.getAllNews
 )
 
