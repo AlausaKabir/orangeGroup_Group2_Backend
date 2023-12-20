@@ -14,7 +14,7 @@ import {
 
 const router = express.Router();
 
-router.use(AuthenticationMiddleware.isUserAuthenticated);
+// router.use(AuthenticationMiddleware.isUserAuthenticated);
 
 router.get('/', getMessages);
 router.post('/create-message', createMessage);
