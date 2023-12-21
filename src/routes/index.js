@@ -12,7 +12,6 @@ import globalErrorHandler from '../utils/errorController';
 import messageRouter from '../apps/messaging/routes/messageRoutes';
 import AppError from '../utils/appError';
 
-
 const corsOptions = {
   origin: '*',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -34,29 +33,25 @@ app.get(`/healthcheck`, (req, res) => {
   res.status(200).send('ConnectUs Backend is online and healthy techies');
 });
 
-
 app.use('/auth', userAuthRoute);
 
-app.use('/news', newsRoute)
+app.use('/news', newsRoute);
 
 app.use('/messages', messageRouter);
 
-
 app.get('/', (req, res) => {
-  res.status(200).send('ConnectUs Backend is online and healthy techies')
+  res.status(200).send('ConnectUs Backend is online and healthy techies');
 });
 
+app.all('*', (req, res, next) => {
+  return next(
+    new AppError(
+      `The requested page: ${req.originalUrl} not found on this server`,
+      404
+    )
+  );
+});
 
-// app.all('*', (req, res, next) => {
-//   return next(
-//     new AppError(
-//       `The requested page: ${req.originalUrl} not found on this server`,
-//       404
-//     )
-//   );
-// });
-
-
-// app.use(globalErrorHandler);
+app.use(globalErrorHandler);
 
 export default app;
