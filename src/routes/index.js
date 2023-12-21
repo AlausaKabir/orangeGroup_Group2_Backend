@@ -13,17 +13,11 @@ import messageRouter from '../apps/messaging/routes/messageRoutes';
 import AppError from '../utils/appError';
 
 
-const corsOptions = {
-  origin: '*',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  optionsSuccessStatus: 204,
-};
-
 const app = express();
 global.logger = Logger.createLogger({ label: 'ConnectUs Backend' });
 
 app.use(helmet());
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -47,16 +41,16 @@ app.get('/', (req, res) => {
 });
 
 
-// app.all('*', (req, res, next) => {
-//   return next(
-//     new AppError(
-//       `The requested page: ${req.originalUrl} not found on this server`,
-//       404
-//     )
-//   );
-// });
+app.all('*', (req, res, next) => {
+  return next(
+    new AppError(
+      `The requested page: ${req.originalUrl} not found on this server`,
+      404
+    )
+  );
+});
 
 
-// app.use(globalErrorHandler);
+app.use(globalErrorHandler);
 
 export default app;
