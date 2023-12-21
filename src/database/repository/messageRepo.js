@@ -97,7 +97,7 @@ export default class MessageRepo {
    */
 
   static async deleteMessage(messageId) {
-    return await Message.findOneAndDelete(messageId);
+    return await Message.findOneAndDelete({ _id: messageId });
   }
 
   static async unreadMessageCount(userId) {
